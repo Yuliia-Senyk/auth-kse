@@ -10,7 +10,7 @@ const persons = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('view engine', 'pug');
-app.set('views', 'views');
+app.set('views', 'viewss');
 
 app.use(session({ secret: 'my-secret',
     resave: true,

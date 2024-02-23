@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title User Dashboard
+    body
+        script.
+            const token = '#{res.token}';
+
+            sessionStorage.setItem('token', token);
+
+            window.location.href = '/protected';
+        h1 Welcome to the User Dashboard
+        p You are being redirected...

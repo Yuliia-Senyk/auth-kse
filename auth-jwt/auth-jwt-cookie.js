@@ -2,9 +2,11 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const verifyToken = require('./helpers/verify-token');
+const secretKey = require("./secret-key");
 
 const app = express();
-const port = 3333;
+const port = 3003;
 
 app.set('view engine', 'pug');
 app.set('views', 'views-jwt');
@@ -13,33 +15,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-const secretKey = 'your-secret-key';
-
-const verifyToken = (req, res, next) => {
-    const token = req.cookies.token;
-
-    if (!token) {
-        return res.status(401).redirect('/login');
-    }
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return res.status(403).redirect('/login');
-        }
-        req.user = decoded;
-        console.log(req.user, 'user')
-        next();
-    });
-};
 
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login-cookies');
 });
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
     if (username === 'user' && password === 'password') {
-        const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+        const token = jwt.sign({ username: username }, secretKey, { expiresIn: '1h' });
         res.cookie('token', token);
         res.redirect('/protected');
     } else {
@@ -59,7 +44,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('home');
 });
 
 app.listen(port, () => {

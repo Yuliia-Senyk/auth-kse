@@ -1,0 +1,25 @@
+doctype html
+html
+    head
+        title Users
+    body
+        h2 current user: #{user}
+
+        hr
+        hr
+        hr
+
+        h3 This is a protected resource
+
+        hr
+        hr
+        hr
+
+        p
+            a(href='/users') List of users
+        p
+            a(href='/register') Register a new user
+        p
+            a(href='/login') Login
+        p
+            a(href='/logout') Logout

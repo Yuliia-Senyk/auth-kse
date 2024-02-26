@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-const PORT = 3000;
+const PORT = 3002;
 
 const app = express();
 const persons = [];
@@ -10,7 +10,7 @@ const persons = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('view engine', 'pug');
-app.set('views', 'viewss');
+app.set('views', 'views');
 
 app.use(session({ secret: 'my-secret',
     resave: true,
@@ -20,7 +20,7 @@ app.use(session({ secret: 'my-secret',
         httpOnly: true
     }}));
 
-// middleware controller
+
 const requireLogin = (req, res, next) => {
     if (!req.session.userId) {
         return res.status(401).json({ error: 'Unauthorized' });
@@ -28,12 +28,10 @@ const requireLogin = (req, res, next) => {
     next();
 };
 
-// middleware controller
 const sendProtectedData = (req, res, next) => {
-    res.json({ message: 'This is a protected resource', user: req.session.userId });
+    res.render('protected', {user: req.session.username});
 }
 
-//helper
 async function hashPassword(password) {
     try {
         const salt = await bcrypt.genSalt(10);
@@ -44,7 +42,6 @@ async function hashPassword(password) {
         throw error;
     }
 }
-
 
 app.get('/', (req, res) => {
     res.redirect('users');
@@ -59,13 +56,11 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
-    res.render('users', {users: persons});
+    res.render('users', {users: persons, currentUser: req.session.username});
 });
 
 
-
 app.post('/register', async (req, res) => {
-    console.log('/register', req.body)
     const { username, password } = req.body;
      try  {
         const hashedPassword = await hashPassword(password);
@@ -91,7 +86,8 @@ app.post('/login', async (req, res) => {
     res.cookie('password', password, { expires: expirationTime });
 
     req.session.userId = person.id;
-    res.json({ message: 'Login successful' });
+    req.session.username = person.username;
+    res.redirect('protected');
 });
 
 

@@ -2,7 +2,7 @@
   "name": "kse-pick-student",
   "version": "1.0.0",
   "scripts": {
-    "start": "node app.js"
+    "start": "node auth-basic/auth-basic.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

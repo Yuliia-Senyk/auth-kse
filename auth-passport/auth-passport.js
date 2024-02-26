@@ -2,8 +2,12 @@ const express = require('express');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const session = require('express-session');
+const PORT = 3001;
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', 'views');
 
 app.use(session({ secret: 'my-key', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
@@ -28,7 +32,7 @@ passport.use(new FacebookStrategy({
     }));
 
 app.get('/', (req, res) => {
-    res.send('Home');
+    res.render('home');
 });
 
 app.get('/auth/facebook', passport.authenticate('facebook'));
@@ -50,7 +54,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
-    res.send(`Welcome, ${req.user.displayName}!`);
+    res.send(`Welcome, ${req.user?.displayName}!`);
 });
 
 function isAuthenticated(req, res, next) {
@@ -59,8 +63,6 @@ function isAuthenticated(req, res, next) {
     }
     res.redirect('/auth/facebook');
 }
-
-const PORT = 3000;
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
